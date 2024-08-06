@@ -1,0 +1,41 @@
+<div class="story-list-container">
+    <div class="story-list-header">
+        <h1>Story List</h1>
+    </div>
+
+    <div class="filters-container">
+        <div class="search-story-filter">
+            <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Search for Story</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Type to search..." autocomplete="off">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loader-container">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div>
+        <table *ngIf="!isLoading" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef style="width:30%"> Title </th>
+                <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="url">
+                <th mat-header-cell *matHeaderCellDef> Url </th>
+                <td mat-cell *matCellDef="let element">
+                    <a mat-button href="{{ element.url }}" target="_blank" *ngIf="element.url != null">{{ element.url }}</a>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator showFirstLastButtons="true" [pageSizeOptions]="[10,50, 100 ,150 ,200]"
+            #paginator></mat-paginator>
+    </div>
+
+</div>
