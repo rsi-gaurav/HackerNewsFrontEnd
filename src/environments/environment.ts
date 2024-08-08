@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://hackernewsbackend-dev-eqc3azabfbhhbfh2.centralindia-01.azurewebsites.net',
+  apiUrl: 'http://localhost:5000',
 };
 
 /*
