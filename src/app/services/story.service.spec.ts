@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 describe('HackerNewsService', () => {
     let service: HackerNewsService;
     let httpMock: HttpTestingController;
+    const API_URL = environment.apiUrl;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -24,15 +25,16 @@ describe('HackerNewsService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should make a GET request to retrieve new stories', () => {
-        const mockResponse = [1, 2, 3]; // Mock response data
+    it('should fetch new stories', () => {
+        const dummyStories = [{ id: 1, title: 'Story 1' }, { id: 2, title: 'Story 2' }];
 
-        service.NewStories().subscribe((response: any) => {
-            expect(response).toEqual(mockResponse);
+        service.NewStories().subscribe((stories: any[]) => {
+            expect(stories.length).toBe(2);
+            expect(stories).toEqual(dummyStories);
         });
 
-        const req = httpMock.expectOne(`${environment.apiUrl}/api/HackerNews/NewStories`);
+        const req = httpMock.expectOne(`${API_URL}/api/HackerNews/NewStories`);
         expect(req.request.method).toBe('GET');
-        req.flush(mockResponse);
+        req.flush(dummyStories);
     });
 });
