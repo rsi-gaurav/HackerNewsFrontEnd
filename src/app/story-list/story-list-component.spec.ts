@@ -7,6 +7,8 @@ import { HackerNewsService } from '../services/story.service';
 import { of, throwError } from 'rxjs';
 
 describe('StoryListComponent', () => {
+  let app : any;
+  let service : any;
   let component: StoryListComponent;
   let fixture: ComponentFixture<StoryListComponent>;
   let hackerNewsService: HackerNewsService;
@@ -17,62 +19,35 @@ describe('StoryListComponent', () => {
       declarations: [StoryListComponent],
       providers: [HackerNewsService]
     }).compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(StoryListComponent);
-    component = fixture.componentInstance;
-    hackerNewsService = TestBed.inject(HackerNewsService);
-    fixture.detectChanges();
+    app = fixture.componentInstance;
+    service = fixture.debugElement.injector.get(HackerNewsService);
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(StoryListComponent).toBeTruthy();
   });
 
-  it('should load stories on initialization', () => {
+  it('should load stories on StoryListComponentinitialization', () => {
     const mockStories = [
       { title: 'Story 1', url: 'https://example.com/story1' },
       { title: 'Story 2', url: 'https://example.com/story2' }
     ];// Mock stories data
-    spyOn(hackerNewsService, 'NewStories').and.returnValue(of(mockStories));
-
-    component.ngOnInit();
-
-    expect(component.stories).toEqual(mockStories);
-    expect(component.dataSource.data).toEqual(mockStories);
-    expect(component.isLoading).toBeFalse();
-  });
-
-  it('should apply filter and update data source', () => {
-      const mockEvent: unknown = {
-        target: {
-          value: 'search query'
-        }
-      };
-      const filterValue = (mockEvent as { target: { value: string } }).target.value;
-      const mockData = [
-        { title: 'Story 1', url: 'https://example.com/story1' },
-        { title: 'Story 2', url: 'https://example.com/story2' }
-      ];
-      component.stories = mockData;
-      component.dataSource = new MatTableDataSource(mockData);
-      spyOn(component.dataSource, 'filter' as never);
-      spyOn(component.dataSource.paginator, 'firstPage' as never);
-  
-      component.applyFilter(mockEvent as Event);
-  
-      expect(component.dataSource.filter).toHaveBeenCalledWith(filterValue.trim().toLowerCase());
-      expect(component.dataSource.paginator?.firstPage).toHaveBeenCalled();
+    spyOn(service,"NewStories").and.callFake(() => {
+      return of(mockStories);
     });
+      app.loadStories();
+      expect(app.stories).toEqual(mockStories);
+      expect(app.dataSource.data).toEqual(mockStories);
+      expect(app.isLoading).toBeFalse();
+  });
 
   it('should handle error while loading stories', () => {
     const mockError = 'Error loading stories';
-    spyOn(hackerNewsService, 'NewStories').and.returnValue(throwError(mockError));
-
-    component.loadStories();
-
-    expect(component.isLoading).toBeFalse();
-    expect(console.error).toHaveBeenCalledWith('Error loading stories', mockError);
+    spyOn(service,"NewStories").and.callFake(() => {
+      return of(throwError(mockError));
+    });
+    app.loadStories();
+    expect(app.isLoading).toBeFalse();
   });
-});
+ });

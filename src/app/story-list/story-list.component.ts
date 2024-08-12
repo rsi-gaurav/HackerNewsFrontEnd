@@ -29,6 +29,10 @@ export class StoryListComponent implements OnInit {
     this.loadStories();
   }
 
+  /**
+   * Applies a filter to the data source.
+   * @param filterValue - The value to filter the data source by.
+   */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -37,21 +41,20 @@ export class StoryListComponent implements OnInit {
     }
   }
 
+   /**
+   * Loads stories from the HackerNewsService and initializes the data source.
+   */
   loadStories() {
     this.isLoading = true;
     this.hackerNewsService.NewStories().subscribe((data: any[]) => {
       this.stories = data;
       console.log('Stories loaded:', this.stories);
-
       this.dataSource = new MatTableDataSource<PeriodicElement>(this.stories);
       this.dataSource.paginator = this.paginator;
-
       this.isLoading = false; // Stop loading once the data is fetched
     }, (error: any) => {
       console.error('Error loading stories', error);
       this.isLoading = false; // Stop loading in case of error
     });
-
   }
-
 }
